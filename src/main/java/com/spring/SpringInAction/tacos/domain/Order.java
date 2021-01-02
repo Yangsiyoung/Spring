@@ -13,12 +13,16 @@ public class Order {
 
 	@NotBlank(message = "빈값이 될 수 없습니다.")
 	private String deliveryName;
+
 	@NotBlank(message = "빈값이 될 수 없습니다.")
 	private String deliveryStreet;
+
 	@NotBlank(message = "빈값이 될 수 없습니다.")
 	private String deliveryCity;
+
 	@NotBlank(message = "빈값이 될 수 없습니다.")
 	private String deliveryState;
+
 	@NotBlank(message = "빈값이 될 수 없습니다.")
 	private String deliveryZip;
 
