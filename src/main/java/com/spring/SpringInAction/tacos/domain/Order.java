@@ -29,7 +29,7 @@ public class Order {
 	@CreditCardNumber(message = "올바른 형식의 카드 번호를 입력해주세요.")
 	private String ccNumber;
 
-	@Pattern(regexp = "^(0[1-9]|1[0-2])([\\/])([1-9][0-9])", message = "올바른 형식의 카드 유효기간을 입력 해주세요.")
+	@Pattern(regexp = "^(0[1-9]|1[0-2])([\\/])([1-9][0-9])", message = "올바른 형식의 카드 유효기간을 입력해주세요.")
 	private String ccExpiration;
 
 	@Digits(integer = 3, fraction = 0, message = "올바른 형식의 CVV 값을 입력해주세요.")
