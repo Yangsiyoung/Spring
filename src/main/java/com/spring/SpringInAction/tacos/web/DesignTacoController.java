@@ -1,9 +1,6 @@
 package com.spring.SpringInAction.tacos.web;
 
-import com.spring.SpringInAction.tacos.domain.Ingredient;
-import com.spring.SpringInAction.tacos.domain.IngredientRepository;
-import com.spring.SpringInAction.tacos.domain.Order;
-import com.spring.SpringInAction.tacos.domain.Taco;
+import com.spring.SpringInAction.tacos.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -34,6 +31,7 @@ import java.util.stream.Collectors;
 public class DesignTacoController {
 
     private final IngredientRepository ingredientRepository;
+    private final TacoRepository tacoRepo;
 
     // 세션에 order 라는 이름으로 order 객체 초기화
     @ModelAttribute("order")
@@ -71,6 +69,7 @@ public class DesignTacoController {
         }
         log.info("Default Session Order Value is: " + design);
         order.addTaco(design);
+        tacoRepo.save(design);
         return "redirect:/orders/current";
     }
 
