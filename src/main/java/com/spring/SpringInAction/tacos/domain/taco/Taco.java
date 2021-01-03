@@ -1,5 +1,6 @@
-package com.spring.SpringInAction.tacos.domain;
+package com.spring.SpringInAction.tacos.domain.taco;
 
+import com.spring.SpringInAction.tacos.domain.ingredient.Ingredient;
 import lombok.Data;
 
 import javax.persistence.*;

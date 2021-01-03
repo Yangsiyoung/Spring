@@ -1,20 +1,19 @@
-package com.spring.SpringInAction.tacos.web;
+package com.spring.SpringInAction.tacos.web.order;
 
-import com.spring.SpringInAction.tacos.domain.Ingredient;
-import com.spring.SpringInAction.tacos.domain.IngredientRepository;
-import com.spring.SpringInAction.tacos.domain.Order;
-import com.spring.SpringInAction.tacos.domain.Taco;
+import com.spring.SpringInAction.tacos.domain.ingredient.Ingredient;
+import com.spring.SpringInAction.tacos.domain.ingredient.IngredientRepository;
+import com.spring.SpringInAction.tacos.domain.order.Order;
+import com.spring.SpringInAction.tacos.domain.taco.Taco;
+import com.spring.SpringInAction.tacos.domain.taco.TacoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +33,7 @@ import java.util.stream.Collectors;
 public class DesignTacoController {
 
     private final IngredientRepository ingredientRepository;
+    private final TacoRepository tacoRepo;
 
     // 세션에 order 라는 이름으로 order 객체 초기화
     @ModelAttribute("order")
@@ -69,8 +69,8 @@ public class DesignTacoController {
         if(errors.hasErrors()) {
             return "design";
         }
-        log.info("Default Session Order Value is: " + design);
         order.addTaco(design);
+        tacoRepo.save(design);
         return "redirect:/orders/current";
     }
 

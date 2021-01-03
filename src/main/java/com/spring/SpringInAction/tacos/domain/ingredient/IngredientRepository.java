@@ -1,4 +1,4 @@
-package com.spring.SpringInAction.tacos.domain;
+package com.spring.SpringInAction.tacos.domain.ingredient;
 
 import org.springframework.data.repository.CrudRepository;
 
