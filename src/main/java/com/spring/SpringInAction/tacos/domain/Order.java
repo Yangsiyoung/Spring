@@ -3,13 +3,25 @@ package com.spring.SpringInAction.tacos.domain;
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-public class Order {
+@Table(name = "Taco_Order")
+@Entity
+public class Order implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@NotBlank(message = "빈값이 될 수 없습니다.")
 	private String deliveryName;
@@ -35,4 +47,10 @@ public class Order {
 	@Digits(integer = 3, fraction = 0, message = "올바른 형식의 CVV 값을 입력해주세요.")
 	private String ccCVV;
 
+	@ManyToMany
+	private List<Taco> tacos = new ArrayList<>();
+
+	public void addTaco(Taco taco) {
+		this.tacos.add(taco);
+	}
 }
