@@ -21,7 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            .antMatchers("/design", "/orders")
+            .antMatchers("/design", "/orders/**")
             .hasRole("USER")
             .antMatchers("/", "/**")
             .permitAll()
@@ -30,7 +30,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .loginPage("/users/login")
             .loginProcessingUrl("/users/login")
             .usernameParameter("tacoUsername")
-            .passwordParameter("tacoUserPassword");
+            .passwordParameter("tacoUserPassword")
+            .and()
+            .logout()
+            .logoutUrl("/users/logout")
+            .logoutSuccessUrl("/");
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.spring.SpringInAction.tacos.domain.ingredient.IngredientRepository;
 import com.spring.SpringInAction.tacos.domain.order.Order;
 import com.spring.SpringInAction.tacos.domain.taco.Taco;
 import com.spring.SpringInAction.tacos.domain.taco.TacoRepository;
+import com.spring.SpringInAction.tacos.domain.user.TacoUser;
+import com.spring.SpringInAction.tacos.domain.user.TacoUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +37,7 @@ public class DesignTacoController {
 
     private final IngredientRepository ingredientRepository;
     private final TacoRepository tacoRepo;
+    private final TacoUserRepository tacoUserRepository;
 
     // 세션에 order 라는 이름으로 order 객체 초기화
     @ModelAttribute("order")
@@ -50,7 +54,7 @@ public class DesignTacoController {
     }
 
     @GetMapping
-    public String showDesignForm(Model model) {
+    public String showDesignForm(Model model, Principal principal) {
         List<Ingredient> ingredients = new ArrayList<>();
         ingredientRepository.findAll().forEach(ingredients::add);
 
@@ -60,6 +64,8 @@ public class DesignTacoController {
                     getIngredientsByType(ingredients, type));
         }
 
+        TacoUser tacoUser = tacoUserRepository.findByUsername(principal.getName()).get();
+        model.addAttribute("user", tacoUser);
         model.addAttribute("taco", new Taco());
         return "design";
     }

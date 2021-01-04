@@ -60,4 +60,5 @@ public class TacoUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

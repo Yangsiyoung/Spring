@@ -5,6 +5,7 @@ import com.spring.SpringInAction.tacos.dto.request.users.SignUpRequestDTO;
 import com.spring.SpringInAction.tacos.service.TacoUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;

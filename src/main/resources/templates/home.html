@@ -6,6 +6,9 @@
 <title>Taco Cloud</title>
 </head>
 <body>
+<form method="POST" th:action="@{/users/logout}" id="logoutForm">
+    <input type="submit" value="Logout"/>
+</form>
 	<h1>Welcome to...</h1>
     <img th:src="@{/images/TacoCloud.png}"/>
 </body>

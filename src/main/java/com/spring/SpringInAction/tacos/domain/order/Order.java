@@ -1,6 +1,7 @@
 package com.spring.SpringInAction.tacos.domain.order;
 
 import com.spring.SpringInAction.tacos.domain.taco.Taco;
+import com.spring.SpringInAction.tacos.domain.user.TacoUser;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -51,6 +52,10 @@ public class Order implements Serializable {
 	private List<Taco> tacos = new ArrayList<>();
 
 	private LocalDate placedAt;
+
+	@JoinColumn(name = "taco_order_user")
+	@ManyToOne
+	private TacoUser tacoUser;
 
 	public void addTaco(Taco taco) {
 		this.tacos.add(taco);
