@@ -26,7 +26,7 @@ public class TacoUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<TacoUser> loginUser = tacoUserRepository.findByUsername(username);
-        if(!loginUser.isPresent()) {
+        if(loginUser.isEmpty()) {
             log.info("Unknown User: " + username);
             throw new UsernameNotFoundException("Unknown User");
         }
