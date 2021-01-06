@@ -4,6 +4,9 @@ import com.spring.SpringInAction.tacos.domain.order.Order;
 import com.spring.SpringInAction.tacos.domain.order.OrderRepository;
 import com.spring.SpringInAction.tacos.domain.user.TacoUser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,12 +17,17 @@ import org.springframework.web.bind.support.SessionStatus;
 import javax.validation.Valid;
 
 @Slf4j
+@ConfigurationProperties(prefix = "taco.orders")
 @RequestMapping("/orders")
 @SessionAttributes("order")
 @Controller
 public class OrderController {
 
     private OrderRepository orderRepo;
+    private int pageSize = 20;
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
     public OrderController(OrderRepository orderRepo) {
         this.orderRepo = orderRepo;
@@ -58,5 +66,13 @@ public class OrderController {
         order.setTacoUser(tacoUser);
 
         return "redirect:/";
+    }
+
+    @ResponseBody
+    @GetMapping("/orderForUser")
+    public String orderForUser(@AuthenticationPrincipal TacoUser tacoUser, Model model) {
+        Pageable pageable = PageRequest.of(0, pageSize);
+        model.addAttribute("orders", orderRepo.findByTacoUserOrderByPlacedAtDesc(tacoUser, pageable));
+        return ""+pageable.getPageSize();
     }
 }
