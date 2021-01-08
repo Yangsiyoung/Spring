@@ -1,8 +1,10 @@
 package com.spring.SpringInAction.tacos.web;
 
+import com.spring.SpringInAction.tacos.config.order.OrderProps;
 import com.spring.SpringInAction.tacos.domain.order.Order;
 import com.spring.SpringInAction.tacos.domain.order.OrderRepository;
 import com.spring.SpringInAction.tacos.domain.user.TacoUser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.domain.PageRequest;
@@ -17,21 +19,14 @@ import org.springframework.web.bind.support.SessionStatus;
 import javax.validation.Valid;
 
 @Slf4j
-@ConfigurationProperties(prefix = "taco.orders")
+@RequiredArgsConstructor
 @RequestMapping("/orders")
 @SessionAttributes("order")
 @Controller
 public class OrderController {
 
-    private OrderRepository orderRepo;
-    private int pageSize = 20;
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public OrderController(OrderRepository orderRepo) {
-        this.orderRepo = orderRepo;
-    }
+    private final OrderRepository orderRepo;
+    private final OrderProps orderProps;
 
     @GetMapping("/current")
     public String orderForm(@AuthenticationPrincipal TacoUser tacoUser, @ModelAttribute(name = "order") Order order, Model model) {
@@ -71,7 +66,7 @@ public class OrderController {
     @ResponseBody
     @GetMapping("/orderForUser")
     public String orderForUser(@AuthenticationPrincipal TacoUser tacoUser, Model model) {
-        Pageable pageable = PageRequest.of(0, pageSize);
+        Pageable pageable = PageRequest.of(0, orderProps.getPageSize());
         model.addAttribute("orders", orderRepo.findByTacoUserOrderByPlacedAtDesc(tacoUser, pageable));
         return ""+pageable.getPageSize();
     }
