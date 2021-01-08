@@ -30,6 +30,12 @@ public class OrderController {
 
     @GetMapping("/current")
     public String orderForm(@AuthenticationPrincipal TacoUser tacoUser, @ModelAttribute(name = "order") Order order, Model model) {
+        initUserData(tacoUser, order);
+        model.addAttribute("user", tacoUser);
+        return "orderForm";
+    }
+
+    private void initUserData(TacoUser tacoUser, Order order) {
         if (order.getDeliveryName() == null) {
             order.setDeliveryName(tacoUser.getFullName());
         }
@@ -45,8 +51,6 @@ public class OrderController {
         if (order.getDeliveryZip() == null) {
             order.setDeliveryZip(tacoUser.getZip());
         }
-        model.addAttribute("user", tacoUser);
-        return "orderForm";
     }
 
     @PostMapping
