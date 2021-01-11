@@ -1,77 +1,82 @@
 package com.spring.SpringInAction.tacos.web;
 
-import com.spring.SpringInAction.tacos.config.order.OrderProps;
 import com.spring.SpringInAction.tacos.domain.order.Order;
 import com.spring.SpringInAction.tacos.domain.order.OrderRepository;
-import com.spring.SpringInAction.tacos.domain.user.TacoUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
-
-import javax.validation.Valid;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/orders")
-@SessionAttributes("order")
-@Controller
+@CrossOrigin(origins="*")
+@RequestMapping(path="/orders",
+        produces="application/json")
+@RestController
 public class OrderController {
 
-    private final OrderRepository orderRepo;
-    private final OrderProps orderProps;
+    private final OrderRepository repo;
 
-    @GetMapping("/current")
-    public String orderForm(@AuthenticationPrincipal TacoUser tacoUser, @ModelAttribute(name = "order") Order order, Model model) {
-        initUserData(tacoUser, order);
-        model.addAttribute("user", tacoUser);
-        return "orderForm";
+    @GetMapping(produces="application/json")
+    public Iterable<Order> allOrders() {
+        return repo.findAll();
     }
 
-    private void initUserData(TacoUser tacoUser, Order order) {
-        if (order.getDeliveryName() == null) {
-            order.setDeliveryName(tacoUser.getFullName());
-        }
-        if (order.getDeliveryStreet() == null) {
-            order.setDeliveryStreet(tacoUser.getStreet());
-        }
-        if (order.getDeliveryCity() == null) {
-            order.setDeliveryCity(tacoUser.getCity());
-        }
-        if (order.getDeliveryState() == null) {
-            order.setDeliveryState(tacoUser.getState());
-        }
-        if (order.getDeliveryZip() == null) {
-            order.setDeliveryZip(tacoUser.getZip());
-        }
+    @PostMapping(consumes="application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order postOrder(@RequestBody Order order) {
+        return repo.save(order);
     }
 
-    @PostMapping
-    public String processOrder(@Valid Order order,
-                               Errors errors, SessionStatus sessionStatus, @AuthenticationPrincipal TacoUser tacoUser) {
-        if (errors.hasErrors()) {
-            return "orderForm";
+    @PutMapping(path="/{orderId}", consumes="application/json")
+    public Order putOrder(@RequestBody Order order) {
+        return repo.save(order);
+    }
+
+    @PatchMapping(path="/{orderId}", consumes="application/json")
+    public Order patchOrder(@PathVariable("orderId") Long orderId,
+                            @RequestBody Order patch) {
+
+        Order order = repo.findById(orderId).get();
+        if (patch.getDeliveryName() != null) {
+            order.setDeliveryName(patch.getDeliveryName());
         }
-        orderRepo.save(order);
-        // Session 에 들어간 값을 지워줌
-        sessionStatus.setComplete();
-        order.setTacoUser(tacoUser);
-
-        return "redirect:/";
+        if (patch.getDeliveryStreet() != null) {
+            order.setDeliveryStreet(patch.getDeliveryStreet());
+        }
+        if (patch.getDeliveryCity() != null) {
+            order.setDeliveryCity(patch.getDeliveryCity());
+        }
+        if (patch.getDeliveryState() != null) {
+            order.setDeliveryState(patch.getDeliveryState());
+        }
+        if (patch.getDeliveryZip() != null) {
+            order.setDeliveryZip(patch.getDeliveryState());
+        }
+        if (patch.getCcNumber() != null) {
+            order.setCcNumber(patch.getCcNumber());
+        }
+        if (patch.getCcExpiration() != null) {
+            order.setCcExpiration(patch.getCcExpiration());
+        }
+        if (patch.getCcCVV() != null) {
+            order.setCcCVV(patch.getCcCVV());
+        }
+        return repo.save(order);
     }
 
-    @ResponseBody
-    @GetMapping("/orderForUser")
-    public String orderForUser(@AuthenticationPrincipal TacoUser tacoUser, Model model) {
-        Pageable pageable = PageRequest.of(0, orderProps.getPageSize());
-        model.addAttribute("orders", orderRepo.findByTacoUserOrderByPlacedAtDesc(tacoUser, pageable));
-        return ""+pageable.getPageSize();
+    @DeleteMapping("/{orderId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrder(@PathVariable("orderId") Long orderId) {
+        try {
+            repo.deleteById(orderId);
+        } catch (EmptyResultDataAccessException e) {}
     }
+
 }
+
+
+
+
+
