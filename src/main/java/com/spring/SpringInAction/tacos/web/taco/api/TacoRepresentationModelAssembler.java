@@ -4,6 +4,7 @@ import com.spring.SpringInAction.tacos.domain.taco.Taco;
 import com.spring.SpringInAction.tacos.web.order.DesignTacoController;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 
+// ResourceAssemblerSupport -> RepresentationModelAssemblerSupport
 public class TacoRepresentationModelAssembler extends RepresentationModelAssemblerSupport<Taco, TacoResource> {
 
     public TacoRepresentationModelAssembler() {
