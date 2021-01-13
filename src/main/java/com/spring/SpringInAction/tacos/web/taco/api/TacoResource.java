@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// ResourceSupport -> RepresentationModel<T>
 public class TacoResource extends RepresentationModel<TacoResource> {
     @Getter
     private final String name;
