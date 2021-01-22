@@ -16,6 +16,7 @@ public class JmsController {
 
     @GetMapping("/message/{message}")
     public String message(@PathVariable("message") String message) {
+        jmsOrderMessagingService.sendOrder(message);
         log.info(message);
         return message;
     }
