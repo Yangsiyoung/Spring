@@ -15,8 +15,16 @@ import org.springframework.web.bind.annotation.*;
 @SessionAttributes("sessionData")
 @Controller
 public class HiController {
+
     @GetMapping("/session/{data}")
-    public String setSessionAttribute(@ModelAttribute("sessionData") @PathVariable("data") String data) {
+    public String setSessionAttribute(@PathVariable("data") String data, Model model) {
+        // @SessionAttributes 에 선언한 변수와 같은 이름으로 모델이 값 넣기
+        model.addAttribute("sessionData", data);
         return "/hi";
+    }
+    @GetMapping("/hi/session/data")
+    public String getSessionAttributes() {
+        // @SessionAttributes 에 선언한 변수 이름으로 자동으로 모델에 값 들어가있음
+        return "/hi_data";
     }
 }

@@ -213,5 +213,86 @@ implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 이 과정이 너무 귀찮아서 나는 사용하지 않는다.  
 
 ## 살펴볼 코드
+* @SessionAttributes
+  Model 에 전역적으로 사용할 수 있는 변수를 생성해 줌
+```
+// 세션에 order 라는 이름의 변수를 추가할 예정
+// 이 어노테이션이 붙은 컨트롤러에서 Model 에 @SessionAttributes("변수명") 에 있는 변수명과 같은 이름으로
+// Model 에 값을 넣는다면(ex. @SessionAttributes("변수명1"), model.addAttribute("변수명1", 값))
+// 세션에 해당 변수명으로 값이 저장 됨.
+// 여러화면에 걸쳐서 값을 입력받아야 완성되는 데이터의 경우에 사용하면 좋다고 한다. (ex. 자소서 입력할때 인적사항 -> 자기소개 -> 최종제출 할때 그느낌쿠)
+// 추가적으로 이 어노테이션을 사용하고 모델이 값을 넣었으면, 다른 컨트롤러에서 이 어노테이션을 사용하여 모델에 넣은 값의 변수명과 같은 변수명을 사용하면
+// 모델엔 앞서 이 어노테이션을 사용하여 넣었던 값이 담겨있다.
+// 세션에 값이 담기고, 이걸 통해서 담긴 세션 값들은 모델에도 들어가서 모델 전역변수가 되어 값을 어디서든 사용할 수 있다고 생각하면 편할 듯.
+@SessionAttributes("sessionData")
+@Controller
+public class HiController {
 
+    @GetMapping("/session/{data}")
+    public String setSessionAttribute(@PathVariable("data") String data, Model model) {
+        // @SessionAttributes 에 선언한 변수와 같은 이름으로 모델이 값 넣기
+        model.addAttribute("sessionData", data);
+        return "/hi";
+    }
+    @GetMapping("/hi/session/data")
+    public String getSessionAttributes() {
+        // @SessionAttributes 에 선언한 변수 이름으로 자동으로 모델에 값 들어가있음
+        return "/hi_data";
+    }
+}
+```
+  
+* @ModelAttribute
+  Model 에 직접 addAttribute 안해줘도 되도록 함
+```
+@Controller
+public class Hi2Controller {
+    @GetMapping("/hi2")
+    public String getSessionData(@ModelAttribute(name = "ingredient") Ingredient ingredient) {
+        // @ModelAttribute 덕분에 직접적으로 model.addAttribute 하지 않아도 됨
+        return "/hi2_data";
+    }
+}
+```
 
+## JPA
+* 의존성 추가
+```
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+```
+
+JPA 이외에도 MongoDB, Neo4, Redis, Cassandra 등을 지원하고 있음.  
+
+## 살펴볼 코드
+```
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@Entity
+public class Student {
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    private Long id;
+
+    private final String name;
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+```
+
+JPA 사용할때 리플렉션으로 값 넣어주고 있어서 기본 생성자 Private 이면 안되는줄...  
+리플렉션으로 생성자 접근자도 설정할 수 있긴하지만... 귀찮아서 지원안하는줄 알았는데 이렇게까지 디테일하게 지원할줄이야...  
+
+* CrudRepository
+JpaRepository 를 그냥 사용해왔었는데  
+JpaRepository 의 조상이 CrudRepository 니까  
+특별히 JpaRepository 의 특수한 기능을 사용하는게 아니고 간단한 CRUD 할거면 CrudRepository 사용하자.  
+
+ 

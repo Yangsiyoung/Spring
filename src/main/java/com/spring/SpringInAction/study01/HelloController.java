@@ -18,9 +18,4 @@ public class HelloController {
         }
         return order.toString();
     }
-
-    @GetMapping("/hi/session/data")
-    public String getSessionAttributes() {
-        return "/hi_data";
-    }
 }
