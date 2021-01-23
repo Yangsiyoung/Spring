@@ -200,3 +200,18 @@ public class ViewControllerConfig implements WebMvcConfigurer {
 }
 ```
 
+# 3장
+## JdbcTemplate
+* 아래 의존성 추가하고  
+```
+implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+```  
+* @Repository 어노테이션으로 스테레오 타입 지정해주고
+
+* JdbcTemplate 주입 받아서 쿼리 작성하고, ResultSet 원하는 객체로 직접 매핑해야함  
+
+이 과정이 너무 귀찮아서 나는 사용하지 않는다.  
+
+## 살펴볼 코드
+
+
