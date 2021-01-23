@@ -77,7 +77,7 @@ all non-transient fields. Will also generate setters for all non-final fields, a
 가릿?!  
 
 ## Controller 관련 코드에 등장한 @Slf4j
-갓롬복...  
+갓롬복...(Kotlin 에서 롬복 사용하면 안대기때문에 잘알아둬야함)  
 **Causes lombok to generate a logger field.** 로거 필드를 자동으로 맨들어쥼.  
 ```
 @Slf4j
@@ -119,38 +119,39 @@ implementation 'org.springframework.boot:spring-boot-starter-validation'
 [왜 없애버리셨나요? : 스프링 개발자 답변](https://github.com/spring-projects/spring-boot/issues/19550)  
 기본으로 같이 제공해줬더니 마니 안쓰더란다...  
 
-* @NotNull
+* @NotNull  
 Null 이면 안댐  
 (**doc : The annotated element must not be {@code null}.**)  
-* @Size
+
+* @Size  
 최대 최소 사이즈 정할 수 있음  
 문자열만 가능한 것이 아니라 Map, Collection, 배열 가능  
 (**doc : {@code CharSequence} (length of character sequence is evaluated)  
           {@code Collection} (collection size is evaluated)  
           {@code Map} (map size is evaluated)  
-          Array (array length is evaluated)**)
-* @NotEmpty
-값이 널이거나 비면 안댐, 그리고 @Size 처럼, Map, Collection 등이 비었는지도 검사 가능
-(**doc : The annotated element must not be {@code null} nor empty.**)
+          Array (array length is evaluated)**)  
+* @NotEmpty  
+값이 널이거나 비면 안댐, 그리고 @Size 처럼, Map, Collection 등이 비었는지도 검사 가능  
+(**doc : The annotated element must not be {@code null} nor empty.**)  
 
-* @NotBlank
-문자열이 널이거나 비면 안댐(@NotEmpty 랑 다른점은 @NotBlank 는 공백 하나만 있는 경우도 잡아줌, @NotBlank 는 빈값 자체를 검사하기때문에  
-공백하나 넣어두면 값이 비어있지 않다고 판단해버린돠...)  
-(**doc : Validate that the annotated string is not {@code null} or empty.**)
+* @NotBlank  
+문자열이 널이거나 비면 안댐(@NotEmpty 랑 다른점은 @NotBlank 는 공백 하나만 있는 경우도 잡아줌,  
+@NotEmpty 는 비어있는 상태인지만 검사하기때문에 공백하나 넣어두면 값이 비어있지 않다고 판단해버린돠...)  
+(**doc : Validate that the annotated string is not {@code null} or empty.**)  
 
-* @CreditCardNumber
+* @CreditCardNumber  
 룬 알고리즘 검사에 합격한 유효한 신용 카드 번호인지 확인해준다. 엄격하다 무섭다.
 
-* @Pattern
+* @Pattern  
 정규표현식을 활용하여 좀 더 구체적으로 검사하고자 할 떄
 
-* @Digits
+* @Digits  
 숫자 자릿수 설정
 integer = 정수 최대 자릿수
 fraction = 소수의 경우 소수의 최대 자릿수
 
-* 사용법
-* Order.java (유효성 조건 설정)
+* 사용법  
+* Order.java (유효성 조건 설정)  
 ```
 @Data
 public class Order {
