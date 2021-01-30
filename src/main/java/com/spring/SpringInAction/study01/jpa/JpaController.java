@@ -12,7 +12,7 @@ public class JpaController {
 
     @GetMapping("/student/{name}")
     public String saveStudent(@PathVariable("name") String name) {
-        Student savedStudent = studentRepository.save(new Student(null, name));
+        Student savedStudent = studentRepository.save(new Student(name));
         System.out.println(savedStudent.toString());
         return savedStudent.getName();
     }
