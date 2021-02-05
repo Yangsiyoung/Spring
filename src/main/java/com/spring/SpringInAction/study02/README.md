@@ -3,7 +3,7 @@
 # 4장 - 스프링 시큐리티
 ## 의존성
 * build.gradle  
-```
+```groovy
 implementation 'org.springframework.boot:spring-boot-starter-security'
 testImplementation 'org.springframework.security:spring-security-test'
 ```
@@ -21,7 +21,7 @@ testImplementation 'org.springframework.security:spring-security-test'
 @EnableWebSecurity 어노테이션을 붙이고 WebSecurityConfigurerAdapter 를 상속하는 클래스를 만들어  
 원하는대로 설정하자.  
 
-```
+```java
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -76,7 +76,7 @@ private static String hasRole(String role) {
 로그인 페이지에서 로그인 시 우리가 원하는 DB 에서 유저 데이터를 가져와서 비교 후 로그인 처리를 해야한다.  
 그러기 위해서는 UserDetailsService 를 구현한 Service 코드가 필요하다.  
 
-```
+```java
 @RequiredArgsConstructor
 @Service
 public class MemberService implements UserDetailsService {
@@ -238,12 +238,12 @@ public UserDetails loadUserByUsername(String username) throws UsernameNotFoundEx
 ## @ConfigurationProperties
 사용 예시
 1. application.properties 파일에 원하는 값 정의
-```
+```properties
 ysjleader.hello=hello my name is siyoung
 ```
 
 2. 사용하고자 하는 빈에서 설정 및 사용
-```
+```java
 @ConfigurationProperties(prefix = "ysjleader")
 @RequiredArgsConstructor
 @RestController
@@ -269,13 +269,13 @@ public class MainController {
 
 그럼 이제 이런 값들을 들고있는 빈을 따로 선언하고, 사용하고자 하는 빈에서 DI 를 받아서 진행해보도록 하자.
 0. 테스트를 위해 프로퍼티를 하나 더 추가했다.
-```
+```properties
 ysjleader.hello=hello my name is 
 ysjleader.name=siyoung
 ```
 
 1. 사용할 값들을 들고있는 빈 선언
-```
+```java
 @ConfigurationProperties(prefix = "ysjleader")
 @Getter
 @Setter
@@ -287,7 +287,7 @@ public class MyConfData {
 ```
 
 2. 방금 선언한 빈을 DI 받아서 사용
-```
+```java
 @RequiredArgsConstructor
 @RestController
 public class MainController {
@@ -304,7 +304,7 @@ public class MainController {
 
 ## 이상은 없지만 IDE 경고 문구를 없애려면?
 아래 의존성 추가
-```
+```groovy
 annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 ```
 
@@ -319,7 +319,7 @@ application-local.properties, application-test.properties, application-prod.prop
 요렇게 만들었다고 가정하자.  
 
 그럼 실행시에 VM 옵션을 주거나 스프링 기본 프로퍼티(application.properties) 에 설정을 해두어야하는데 값은 아래와 같다.  
-```
+```properties
 spring.profiles.active=원하는 프로파일(ex. local, test, prod ...)
 ```
 
