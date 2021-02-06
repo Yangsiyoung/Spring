@@ -18,7 +18,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/member/**", "/h2-console/**", "/error")
+                .antMatchers("/", "/member/**", "/h2-console/**", "/error", "/study/**", "/post/**")
                 .permitAll()
                 .antMatchers("/info/**")
                 .authenticated()
@@ -27,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.formLogin();
 
-        http.csrf().ignoringAntMatchers("/h2-console/**"); // 없으면 h2 console 로그인 안됨
+        http.csrf().ignoringAntMatchers("/h2-console/**", "/study/**"); // 없으면 h2 console 로그인 안됨
         // <iframe> 혹은 <object> 에서 우리 사이트 페이지를 렌더링 할 수 있는지 여부
         // 나는 h2 console 때문에 동일 사이트에서만 허용하는 정책을 넣어둠
         http.headers()
