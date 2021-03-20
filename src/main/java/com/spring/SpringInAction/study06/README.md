@@ -108,3 +108,76 @@ public interface HandlerFunction<T extends ServerResponse> {
 우리가 Controller 에서 Request 에 대해 서비스를 호출하거나 리턴 값을 지정하는 등을 구현하는 것과 같이  
 우리가 원하는 대로 구현을 하면된다. (그러니까 미리 구현된 구현체가 없는 것 이겠지?)  
 
+그리고 method chaining 도 가능
+```java
+@Bean
+public RouterFunction<?> chainRouter() {
+    return route(GET("/functional/chain1"), request -> ServerResponse.ok().body(just("chain1"), String.class))
+            .andRoute(GET("/functional/chain2"), request -> ServerResponse.ok().body(just("chain2"), String.class));
+}
+```
+
+#### Post 받기
+
+* case 1
+```java
+@Bean
+public RouterFunction<?> simplePostRouter() {
+    return route(POST("/functional/user").and(contentType(MediaType.APPLICATION_JSON)),
+                        request -> {
+                            Mono<SignUpRequestDTO> signUpRequestDTOMono = request.bodyToMono(SignUpRequestDTO.class);
+                            Mono<User> userMono = signUpRequestDTOMono.map((dto) -> User.builder().nickname(dto.getNickname()).email(dto.getEmail()).build());
+                            return ServerResponse.ok().body(userMono, User.class);
+                        });
+}
+```
+
+Service 도 사용하면 아래와 같이  
+```java
+@Bean
+public RouterFunction<?> simplePostRouter2() {
+    return route(POST("/functional/user2").and(contentType(MediaType.APPLICATION_JSON)),
+            request -> ServerResponse.ok().body(userService.signUp(request.bodyToMono(SignUpRequestDTO.class)), SignUpResponseDTO.class));
+}
+```
+
+* 항상 주의할 점은 Controller, Service, Repository 다 리액티브하게 해야한다는 것
+
+#### 라우터 로직을 분리해보자
+```java
+@Bean
+public RouterFunction<?> mainRouterFunction() {
+    //return route(GET(""), this::main).andRoute(POST(""), this::mainPost).andRoute(POST("/form-encoded").and(contentType(MediaType.APPLICATION_FORM_URLENCODED)), this::mainPostForm);
+    return route()
+                .GET("", MainRouterFunctions::main)
+                .POST("", contentType(MediaType.APPLICATION_JSON), MainRouterFunctions::mainPost)
+                .POST("", contentType(MediaType.APPLICATION_FORM_URLENCODED), MainRouterFunctions::mainPostForm)
+                //.POST("", contentType(MediaType.MULTIPART_FORM_DATA), MainRouterFunctions::mainPostMultipartForm)
+            .build();
+}
+```
+
+```java
+public class MainRouterFunctions {
+
+    public static Mono<ServerResponse> main(ServerRequest serverRequest) {
+        return ServerResponse.ok().body(Mono.just("Hello"), String.class);
+    }
+
+    public static Mono<ServerResponse> mainPost(ServerRequest serverRequest) {
+        Mono<MainRequestDTO> mainRequestDTOMono = serverRequest.bodyToMono(MainRequestDTO.class);
+        Mono<MainResponseDTO> mainResponseDTOMono = mainRequestDTOMono.map((mainRequestDTO -> new MainResponseDTO(mainRequestDTO.getParam1(), mainRequestDTO.getParam2())));
+        return ServerResponse.ok().body(mainResponseDTOMono, MainRequestDTO.class);
+    }
+
+    public static Mono<ServerResponse> mainPostForm(ServerRequest serverRequest) {
+        Mono<MainRequestDTO> mainRequestDTOMono = serverRequest.formData().flatMap((stringStringMultiValueMap -> Mono.just(new MainRequestDTO(stringStringMultiValueMap.getFirst("param1"), stringStringMultiValueMap.getFirst("param2")))));
+        Mono<MainResponseDTO> mainResponseDTOMono = mainRequestDTOMono.map((mainRequestDTO -> new MainResponseDTO(mainRequestDTO.getParam1(), mainRequestDTO.getParam2())));
+        return ServerResponse.ok().body(mainResponseDTOMono, MainRequestDTO.class);
+    }
+
+    public static Mono<ServerResponse> mainPostMultipartForm(ServerRequest serverRequest) {
+        return null;
+    }
+}
+```

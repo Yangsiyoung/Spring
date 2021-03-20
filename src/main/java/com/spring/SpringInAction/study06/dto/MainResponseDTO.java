@@ -1,4 +1,4 @@
-package com.spring.SpringInAction.study03.domain;
+package com.spring.SpringInAction.study06.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Comment {
-    private String commentId;
-    private String message;
+public class MainResponseDTO {
+    private String param1;
+    private String param2;
 }
