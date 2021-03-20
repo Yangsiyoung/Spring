@@ -57,4 +57,26 @@ public class ControllerTest {
         String result = testRestTemplate.postForObject(requestURL, new MonoDTO("requestData1", "requestData2"), String.class);
         assertEquals(expect, result);
     }
+
+    @DisplayName("Functional Router Simple Test")
+    @Test
+    public void functionalRouterSimpleTest() {
+        String requestURL = "http://localhost:" + port + "/functional/main";
+        String expect = "Hello Spring";
+        String result = testRestTemplate.getForObject(requestURL, String.class);
+        assertEquals(expect, result);
+    }
+
+    @DisplayName("Functinal Router Chaining Test")
+    @Test
+    public void functionalRouterChainingTest() {
+        String requestURL = "http://localhost:" + port + "/functional/chain1";
+        String expect = "chain1";
+        String result = testRestTemplate.getForObject(requestURL, String.class);
+        assertEquals(expect, result);
+        requestURL = "http://localhost:" + port + "/functional/chain2";
+        expect = "chain2";
+        result = testRestTemplate.getForObject(requestURL, String.class);
+        assertEquals(expect, result);
+    }
 }
