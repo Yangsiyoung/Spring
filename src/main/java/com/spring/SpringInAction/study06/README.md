@@ -30,7 +30,81 @@ public Mono<MonoDTO> getMono() {
 ```
 
 ### 리액티브하게 입력 처리하기
+```java
+@PostMapping("/mono")
+public Mono<MonoDTO> postMono(@RequestBody Mono<MonoDTO> monoDTO) {
+    return monoDTO;
+}
+```
 
+`~~음... Mono 자체에 기본 생성자가 없어서 Jackson 에서 컨버팅을 못해주고 있는데... 해결법 아시는분???~~  
+==> ㅡㅡ tomcat 으로 돌리고있었네이거...`  
 
+# 함수형 요청 핸들러 작성하기  
+책에서 애노테이션 기반 프로그래밍에 대한 단점을 지적하며 이야기를 시작함(디버깅 힘들다, 무엇인지만 정의하고 어떻게 해야하는지 찾기 힘들다 등)  
+(근데 애노테이션을 자바(스프링) 에서 채택할때 심플한 개발을 위해서였던걸로 기억하는데... 빼면 또 설정을 위한 코드가 많아지는게 아닌가... 조심스럽다...)  
 
+## 스프링 함수형 프로그래밍 모델 기본 타입
+* RequestPredicate : 요청 타입  
+* RouterFunction : 어떻게 핸들러에게 전달되어야 하는가  
+* ServerRequest : HTTP Request 이며 Header 와 Body 사용 가능  
+* ServerResponse : HTTP Response 이며, Header 와 Body 를 포함  
+
+### Hello Spring 을 응답해주는 간단한 예제
+```java
+@Bean
+public RouterFunction<?> helloSpringRouter() {
+    return route(GET("/functional/main"), new HandlerFunction<ServerResponse>() {
+        @Override
+        public Mono<ServerResponse> handle(ServerRequest request) {
+            return ServerResponse.ok().body(Mono.just("Hello Spring"), String.class);
+
+        }
+    });
+}
+```
+
+코드가 기니까 static method import 하고 lambda 를 사용하면 아래와 같이 사용가능하다.  
+```java
+@Bean
+public RouterFunction<?> helloRouter() {
+    return route(GET("/functional/hello"), request -> ServerResponse.ok().body(just("hello"), String.class));
+}
+```
+
+나는 잘 모르니까 RouterFunction 의 route 부터 까보자  
+```java
+public static <T extends ServerResponse> RouterFunction<T> route(
+			RequestPredicate predicate, HandlerFunction<T> handlerFunction) {
+
+		return new DefaultRouterFunction<>(predicate, handlerFunction);
+	}
+```
+
+RequestPredicate 타입과 HandlerFunction 타입을 인자로 받는다.  
+RequestPredicate 둘다 @FunctionalInterface 어노테이션이 붙어있다.  
+이말은 둘다 람다로 표현 가능하다는 것  
+
+여기서 RequestPredicate 는 RequestPredicates 라는 RequestPredicate 타입을 리턴하는  
+static method 들을 미리 만들어둔 abstract class 가 있다.  
+
+그로니 RequestPredicates.GET() 과 같은 메서드를 사용한 것 이고,  
+HandlerFunction 의 경우 아래와 같이 되어있는데  
+```java
+@FunctionalInterface
+public interface HandlerFunction<T extends ServerResponse> {
+
+	/**
+	 * Handle the given request.
+	 * @param request the request to handle
+	 * @return the response
+	 */
+	Mono<T> handle(ServerRequest request);
+
+}
+```
+
+실제 Request 를 어떻게 처리할지에(handle) 대한 부분이니까   
+우리가 Controller 에서 Request 에 대해 서비스를 호출하거나 리턴 값을 지정하는 등을 구현하는 것과 같이  
+우리가 원하는 대로 구현을 하면된다. (그러니까 미리 구현된 구현체가 없는 것 이겠지?)  
 
